@@ -1,0 +1,35 @@
+# Fallback manual: push de tag v* → anexa o JS na Release daquela tag.
+# O caminho normal é o auto-release.yml (merge na main). Este existe para
+# republicar um asset ou marcar uma versão à mão sem tocar na main.
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+jobs:
+  release:
+    name: Publish card asset
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Sanity (sintaxe + probe)
+        run: |
+          node --check dist/mw-occupancy-motion-element.js
+          node tools/probe.js
+
+      - name: Upload card to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: dist/mw-occupancy-motion-element.js
+          asset_name: mw-occupancy-motion-element.js
+          tag: ${{ github.ref }}
+          overwrite: true

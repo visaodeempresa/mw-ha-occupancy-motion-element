@@ -1,0 +1,76 @@
+# Release automática: todo push na main que toque o card →
+# bump semântico (commits desde a última tag: "BREAKING"/"!:" = major ·
+# "feat" = minor · resto = patch) → sincroniza a versão dentro do JS →
+# tag → Release com o asset → HACS notifica a atualização no HA.
+#
+# release.yml (tag manual v*) fica como fallback — o upload é idempotente.
+name: Auto Release
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "dist/**"
+      - "hacs.json"
+
+jobs:
+  auto-release:
+    name: Bump, tag & release
+    runs-on: ubuntu-latest
+    # não re-disparar sobre o commit de bump feito pelo próprio bot
+    if: "!contains(github.event.head_commit.message, '[skip release]')"
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout (histórico completo p/ tags)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Compute next version
+        id: ver
+        run: |
+          set -euo pipefail
+          LAST=$(git describe --tags --abbrev=0 --match 'v*' 2>/dev/null || echo v0.0.0)
+          COMMITS=$(git log "${LAST}..HEAD" --pretty=%s 2>/dev/null || git log --pretty=%s)
+          BUMP=patch
+          echo "$COMMITS" | grep -qiE '(BREAKING|!:)' && BUMP=major || true
+          [ "$BUMP" = "patch" ] && echo "$COMMITS" | grep -qiE '^feat' && BUMP=minor || true
+          V=${LAST#v}; IFS=. read -r MA MI PA <<< "$V"
+          case $BUMP in
+            major) MA=$((MA+1)); MI=0; PA=0;;
+            minor) MI=$((MI+1)); PA=0;;
+            patch) PA=$((PA+1));;
+          esac
+          NEXT="v${MA}.${MI}.${PA}"
+          echo "last=$LAST next=$NEXT bump=$BUMP"
+          echo "next=$NEXT" >> "$GITHUB_OUTPUT"
+
+      - name: Sync version into card + sanity
+        run: |
+          set -euo pipefail
+          NEXT=${{ steps.ver.outputs.next }}
+          # o banner do card é "%c 0.1.0 " (sem o "v") — o v? evita no-op silencioso
+          sed -i -E "s/%c v?[0-9]+\.[0-9]+\.[0-9]+ /%c ${NEXT#v} /" dist/mw-occupancy-motion-element.js
+          grep -q "%c ${NEXT#v} " dist/mw-occupancy-motion-element.js
+          node --check dist/mw-occupancy-motion-element.js
+          node tools/probe.js
+
+      - name: Commit version bump
+        run: |
+          set -euo pipefail
+          if ! git diff --quiet dist/mw-occupancy-motion-element.js; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add dist/mw-occupancy-motion-element.js
+            git commit -m "chore: 🔖 ${{ steps.ver.outputs.next }} [skip release]"
+            git push
+          fi
+
+      - name: Tag & publish release (asset + notas)
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.ver.outputs.next }}
+          name: ${{ steps.ver.outputs.next }}
+          generate_release_notes: true
+          files: dist/mw-occupancy-motion-element.js

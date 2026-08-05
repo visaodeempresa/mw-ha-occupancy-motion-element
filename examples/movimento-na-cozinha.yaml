@@ -1,0 +1,106 @@
+# O `state-icon` original da planta — só sabia pintar o ícone:
+#
+#   type: state-icon
+#   style:
+#     top: 14%
+#     left: 35.5%
+#     "--paper-item-icon-color": var(--cor-presenca-cozinha)
+#   entity: binary_sensor.movimento_na_cozinha
+#   icon: mdi:motion-sensor
+#   tap_action: {action: none}
+#   hold_action: {action: none}
+#   title: 🟨👤 SENSOR DE MOVIMENTO NA COZINHA
+#
+# vira isto — mesma cor, mesma posição, e agora com radar quando detecta:
+
+type: custom:mw-occupancy-motion-element
+entity: binary_sensor.movimento_na_cozinha
+name: 🟨👤 SENSOR DE MOVIMENTO NA COZINHA
+left: 35.5%
+top: 14%
+color_detected: var(--cor-presenca-cozinha)
+
+---
+# Tradução literal, sem nada de novo: sem animação, sem halo, sem cursor.
+# É o `state-icon` de antes, só que componentizado.
+
+type: custom:mw-occupancy-motion-element
+entity: binary_sensor.movimento_na_cozinha
+name: 🟨👤 SENSOR DE MOVIMENTO NA COZINHA
+left: 35.5%
+top: 14%
+color_detected: var(--cor-presenca-cozinha)
+color_clear: var(--cor-presenca-cozinha)
+icon: mdi:motion-sensor
+animation: none
+glow: false
+icon_opacity_clear: 1
+tap_action: none
+hold_action: none
+
+---
+# Pastilha de vidro: placa circular fosca, elevação que sobe quando detecta.
+# `plate_frost` é o único ajuste caro da casa — um punhado por planta, não um
+# em cada cômodo.
+
+type: custom:mw-occupancy-motion-element
+entity: binary_sensor.movimento_na_sala
+name: MOVIMENTO NA SALA
+left: 62%
+top: 48%
+size: 7vh
+plate: circle
+plate_frost: 6
+ring: 1
+elevation: 2
+elevation_detected: 4
+animation: pulse
+
+---
+# Presença de verdade (device_class occupancy): o ícone troca sozinho entre
+# "casa com gente" e "casa vazia", e o farol respira em vez de piscar.
+
+type: custom:mw-occupancy-motion-element
+entity: binary_sensor.presenca_no_quarto
+name: PRESENÇA NO QUARTO
+left: 22%
+top: 66%
+icon_set: auto
+animation: beacon
+animation_speed: 3.2
+color_detected: "#4dd0e1"
+
+---
+# Alarme: só aparece quando detecta, pisca em vermelho e leva para a câmera.
+
+type: custom:mw-occupancy-motion-element
+entity: binary_sensor.movimento_no_quintal
+name: MOVIMENTO NO QUINTAL
+left: 84%
+top: 30%
+hide_clear: true
+color_detected: "#ff5252"
+animation: blink
+animation_speed: 1.6
+elevation: 3
+tap_action:
+  action: navigate
+navigation_path: /lovelace/cameras
+
+---
+# Placa quadrada com cantos suaves, sombra tingida de azul e nada de animação —
+# quando a planta já tem muita coisa se mexendo.
+
+type: custom:mw-occupancy-motion-element
+entity: binary_sensor.movimento_no_corredor
+name: MOVIMENTO NO CORREDOR
+left: 47%
+top: 39%
+plate: rounded
+plate_radius: 30%
+plate_opacity: 0.22
+elevation: 2
+shadow_color: "#0d47a1"
+animation: none
+glow_when: always
+fade: 1.2

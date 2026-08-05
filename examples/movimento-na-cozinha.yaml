@@ -50,10 +50,10 @@ entity: binary_sensor.movimento_na_sala
 name: MOVIMENTO NA SALA
 left: 62%
 top: 48%
-size: 7%
+size: 7vh
 plate: circle
 plate_frost: 6
-ring: 6%
+ring: 1
 elevation: 2
 elevation_detected: 4
 animation: pulse
@@ -108,17 +108,12 @@ glow_when: always
 fade: 1.2
 
 ---
-# Medidas fixas, do jeito que a v0.1.0 desenhava: a caixa passa a depender da
-# altura da janela em vez da largura da planta. As proporções internas são as
-# mesmas — isto aqui só troca a régua.
+# O sensor do escritório, do jeito que foi validado na tela: amarelo aceso
+# quando detecta, radar de dois anéis, halo e nada mais.
 
 type: custom:mw-occupancy-motion-element
-entity: binary_sensor.movimento_na_cozinha
-name: 🟨👤 SENSOR DE MOVIMENTO NA COZINHA
-left: 35.5%
-top: 14%
-color_detected: var(--cor-presenca-cozinha)
-size: 6vh
-icon_size: 3.6vh
-glow_blur: 1.1vh
-radar_width: 2px
+entity: binary_sensor.sensor_de_movimento_do_escritorio_movimento
+name: ⬛️👤 SENSOR DE MOVIMENTO DO ESCRITÓRIO
+left: 50%
+top: 55%
+color_detected: yellow

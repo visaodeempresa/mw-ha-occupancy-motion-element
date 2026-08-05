@@ -50,9 +50,9 @@ jobs:
         run: |
           set -euo pipefail
           NEXT=${{ steps.ver.outputs.next }}
-          # o banner do card é "%c 0.1.0 " (sem o "v") — o v? evita no-op silencioso
-          sed -i -E "s/%c v?[0-9]+\.[0-9]+\.[0-9]+ /%c ${NEXT#v} /" dist/mw-occupancy-motion-element.js
-          grep -q "%c ${NEXT#v} " dist/mw-occupancy-motion-element.js
+          # a versão vive em `const VERSION = "x.y.z"` (o banner do console a usa)
+          sed -i -E "s/const VERSION = \"[0-9]+\.[0-9]+\.[0-9]+\"/const VERSION = \"${NEXT#v}\"/" dist/mw-occupancy-motion-element.js
+          grep -q "const VERSION = \"${NEXT#v}\"" dist/mw-occupancy-motion-element.js
           node --check dist/mw-occupancy-motion-element.js
           node tools/probe.js
 

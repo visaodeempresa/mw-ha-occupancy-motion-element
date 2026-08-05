@@ -20,6 +20,8 @@ left: 35.5%
 top: 14%
 color_detected: var(--cor-presenca-cozinha)
 
+# (o editor visual do picture-elements também edita tudo isso em formulário)
+
 ---
 # Tradução literal, sem nada de novo: sem animação, sem halo, sem cursor.
 # É o `state-icon` de antes, só que componentizado.
@@ -48,10 +50,10 @@ entity: binary_sensor.movimento_na_sala
 name: MOVIMENTO NA SALA
 left: 62%
 top: 48%
-size: 7vh
+size: 7%
 plate: circle
 plate_frost: 6
-ring: 1
+ring: 6%
 elevation: 2
 elevation_detected: 4
 animation: pulse

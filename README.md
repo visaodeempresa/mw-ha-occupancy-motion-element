@@ -22,8 +22,9 @@ e do [MW Door / Window Element](https://github.com/visaodeempresa/mw-ha-door-win
 que cuidam das luzes e das portas da mesma planta.
 
 > **v1.0** — reescrita para velocidade e com **editor visual**. A geometria
-> agora é **proporcional** (`size` em % da planta, não em `vh`): quem veio da
-> v0.1.0 troca `size: 6vh` por `size: 6%`.
+> agora é **proporcional**: `size` em % da planta, e as medidas internas em %
+> do lado do elemento. Veja [Voltando ao visual da v0.1.0](#voltando-ao-visual-da-v010)
+> se você quer as medidas fixas de antes.
 
 ## Instalação (HACS)
 
@@ -88,6 +89,23 @@ radar) é resolvido em `cqmin` — % do lado do próprio elemento. Onde a opçã
 aceitar `%`, é isso que acontece; `px`, `vh` e afins continuam valendo se você
 quiser tamanho fixo.
 
+## Voltando ao visual da v0.1.0
+
+A v0.1.0 media tudo em `vh` (fixo na altura da tela); a v1.0 mede em % da
+planta e do próprio elemento. As proporções internas são as mesmas — ícone a
+60% e halo a 18% do lado da caixa —, o que muda é o **tamanho da caixa**, que
+agora acompanha a planta em vez da janela.
+
+Se você quer exatamente as medidas fixas de antes, elas continuam válidas:
+qualquer opção de medida aceita `vh`, `px`, `em` ou o que você escrever.
+
+```yaml
+size: 6vh
+icon_size: 3.6vh
+glow_blur: 1.1vh
+radar_width: 2px
+```
+
 ## Opções
 
 ### Entidade
@@ -117,7 +135,7 @@ quiser tamanho fixo.
 | `icon_unavailable` | `mdi:cancel` | |
 | `icon_unknown` | `mdi:crosshairs-question` | |
 | `icon_fallback` | `mdi:motion-sensor` | |
-| `icon_size` | `""` | vazio = 52% do lado da caixa |
+| `icon_size` | `""` | vazio = 60% do lado da caixa |
 | `icon_scale` | `1` | |
 | `icon_opacity_*` | `1` / `0.75` / `0.9` / `0.9` | opacidade por estado |
 | `icon_offset_y` | `0` | desloca o ícone dentro da caixa |
@@ -146,7 +164,7 @@ derivado dessa cor (halo, placa, borda) sai por `rgba()` quando dá, e por
 | `effect` | `glow` | `glow`, `neon`, `soft`, `flat` |
 | `glow` | `true` | liga o halo |
 | `glow_when` | `detected` | `detected`, `always`, `never` |
-| `glow_blur` | `12%` | % do lado da caixa |
+| `glow_blur` | `18%` | % do lado da caixa |
 | `glow_opacity` | `0.7` | alfa do halo derivado da cor do estado |
 | `glow_color_*` | `""` | cor crua por estado (vence o derivado) |
 

@@ -106,3 +106,19 @@ shadow_color: "#0d47a1"
 animation: none
 glow_when: always
 fade: 1.2
+
+---
+# Medidas fixas, do jeito que a v0.1.0 desenhava: a caixa passa a depender da
+# altura da janela em vez da largura da planta. As proporções internas são as
+# mesmas — isto aqui só troca a régua.
+
+type: custom:mw-occupancy-motion-element
+entity: binary_sensor.movimento_na_cozinha
+name: 🟨👤 SENSOR DE MOVIMENTO NA COZINHA
+left: 35.5%
+top: 14%
+color_detected: var(--cor-presenca-cozinha)
+size: 6vh
+icon_size: 3.6vh
+glow_blur: 1.1vh
+radar_width: 2px

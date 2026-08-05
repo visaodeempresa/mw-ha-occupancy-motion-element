@@ -100,7 +100,7 @@ check("halo de cor var() sai por color-mix",
   /color-mix\(in srgb, var\(--mw-presence-color, #ffa726\) 70%, transparent\)/
     .test(p(on, "--mw-glow")), p(on, "--mw-glow"));
 check("halo entra como drop-shadow no ícone em cqmin",
-  p(on, "--mw-ico-filter").startsWith("drop-shadow(0 0 12cqmin color-mix"),
+  p(on, "--mw-ico-filter").startsWith("drop-shadow(0 0 18cqmin color-mix"),
   p(on, "--mw-ico-filter"));
 check("detectado anima radar", on.getAttribute("anim") === "radar");
 check("ícone padrão é mdi:motion-sensor", on._ico.getAttribute("icon") === "mdi:motion-sensor");
@@ -199,7 +199,7 @@ check("vidro fosco vira backdrop-filter",
 // ---- efeitos ---------------------------------------------------------------
 check("effect:neon engorda o halo",
   p(make({ entity: "binary_sensor.movimento_na_cozinha", effect: "neon" }), "--mw-ico-filter")
-    .startsWith("drop-shadow(0 0 20.4cqmin"));
+    .startsWith("drop-shadow(0 0 30.6cqmin"));
 check("effect:flat apaga o halo",
   p(make({ entity: "binary_sensor.movimento_na_cozinha", effect: "flat" }),
     "--mw-ico-filter") === "none");
@@ -296,6 +296,17 @@ check("arrastar não dispara ação", hass.calls.length === 1);
 held.title = "";
 held.emit("pointerenter", {});
 check("tooltip é recalculado ao passar o mouse", /detectado há/.test(held.title), held.title);
+
+// ---- modo "v0.1.0": medidas fixas em vh continuam valendo ------------------
+const legacy = make({
+  entity: "binary_sensor.movimento_na_cozinha",
+  size: "6vh", icon_size: "3.6vh", glow_blur: "1.1vh", radar_width: "2px",
+});
+check("size em vh passa inteiro para o host", p(legacy, "--mw-size") === "6vh");
+check("icon_size em vh passa inteiro", p(legacy, "--mw-icon-size") === "3.6vh");
+check("glow_blur em vh passa inteiro",
+  p(legacy, "--mw-ico-filter").startsWith("drop-shadow(0 0 1.1vh"), p(legacy, "--mw-ico-filter"));
+check("radar_width em px passa inteiro", p(legacy, "--mw-ring-w") === "2px");
 
 console.log("editor:");
 const ed = new reg["mw-occupancy-motion-element-editor"]();

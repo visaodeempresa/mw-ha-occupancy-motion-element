@@ -41,7 +41,7 @@
     effect: "glow",             // glow · neon · soft · flat
     glow: true,
     glow_when: "detected",      // detected · always · never
-    glow_blur: "12%",           // % = do lado do elemento (vira cqmin)
+    glow_blur: "18%",           // % = do lado do elemento (vira cqmin)
     glow_opacity: 0.7,
     glow_color_detected: "", glow_color_clear: "",
     glow_color_unavailable: "", glow_color_unknown: "",
@@ -91,7 +91,7 @@
     icon_unavailable: "mdi:cancel",
     icon_unknown: "mdi:crosshairs-question",
     icon_fallback: "mdi:motion-sensor",
-    icon_size: "",              // vazio = 52% do lado (acompanha a planta)
+    icon_size: "",              // vazio = 60% do lado (acompanha a planta)
     icon_scale: 1,
     icon_offset_y: "0",
     icon_upright: false,        // desfaz o `rotate` só no ícone
@@ -188,7 +188,7 @@
   transition:background var(--mw-fade,.7s) ease,box-shadow var(--mw-fade,.7s) ease;}
 .box{inset:0;display:flex;align-items:center;justify-content:center;
   transform:translateY(var(--mw-icon-dy,0)) var(--mw-icon-rot,rotate(0deg));}
-.ico{--mdc-icon-size:var(--mw-icon-size,52cqmin);color:var(--mw-c,#fff);
+.ico{--mdc-icon-size:var(--mw-icon-size,60cqmin);color:var(--mw-c,#fff);
   opacity:var(--mw-icon-op,1);filter:var(--mw-ico-filter,none);
   transform:scale(var(--mw-icon-scale,1));
   transition:color var(--mw-fade,.7s) ease,opacity var(--mw-fade,.7s) ease,
@@ -555,7 +555,7 @@
       const filters = [];
       if (glowOn) {
         filters.push(`drop-shadow(0 0 ${
-          scaleLen(len(c.glow_blur, "12cqmin"), this._fx.blur)} ${glowColor})`);
+          scaleLen(len(c.glow_blur, "18cqmin"), this._fx.blur)} ${glowColor})`);
       }
       if (c.icon_shadow) filters.push(c.icon_shadow);
       else if (!hasPlate && ELEV_ICON[lvl]) filters.push(tint(ELEV_ICON[lvl], c.shadow_color));

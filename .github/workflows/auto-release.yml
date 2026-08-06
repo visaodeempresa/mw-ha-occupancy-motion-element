@@ -1,9 +1,12 @@
-# Release automática: todo push na main que toque o card →
+# Release automática: todo push na main que toque o componente →
 # bump semântico (commits desde a última tag: "BREAKING"/"!:" = major ·
 # "feat" = minor · resto = patch) → sincroniza a versão dentro do JS →
 # tag → Release com o asset → HACS notifica a atualização no HA.
 #
 # release.yml (tag manual v*) fica como fallback — o upload é idempotente.
+#
+# GERADO por IA/tools/mw-devops.sh — não editar à mão.
+# Fonte canônica: IA/lib/mw-devops/templates/auto-release.yml
 name: Auto Release
 
 on:
@@ -27,6 +30,10 @@ jobs:
         with:
           fetch-depth: 0
 
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
       - name: Compute next version
         id: ver
         run: |
@@ -46,11 +53,22 @@ jobs:
           echo "last=$LAST next=$NEXT bump=$BUMP"
           echo "next=$NEXT" >> "$GITHUB_OUTPUT"
 
-      - name: Sync version into card + sanity
+      - name: Respeitar versão maior já escrita no dist
+        # quem sobe a mão na versão dentro do JS manda: o bump nunca desce
+        id: keep
         run: |
           set -euo pipefail
           NEXT=${{ steps.ver.outputs.next }}
-          # a versão vive em `const VERSION = "x.y.z"` (o banner do console a usa)
+          CUR=$(grep -oE 'const VERSION = "[0-9]+\.[0-9]+\.[0-9]+"' dist/mw-occupancy-motion-element.js | head -1 \
+                | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')
+          BIG=$(printf '%s\n%s\n' "${NEXT#v}" "$CUR" | sort -V | tail -1)
+          echo "dist=$CUR calculada=${NEXT#v} escolhida=$BIG"
+          echo "next=v$BIG" >> "$GITHUB_OUTPUT"
+
+      - name: Sync version into dist + sanity
+        run: |
+          set -euo pipefail
+          NEXT=${{ steps.keep.outputs.next }}
           sed -i -E "s/const VERSION = \"[0-9]+\.[0-9]+\.[0-9]+\"/const VERSION = \"${NEXT#v}\"/" dist/mw-occupancy-motion-element.js
           grep -q "const VERSION = \"${NEXT#v}\"" dist/mw-occupancy-motion-element.js
           node --check dist/mw-occupancy-motion-element.js
@@ -63,14 +81,14 @@ jobs:
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
             git add dist/mw-occupancy-motion-element.js
-            git commit -m "chore: 🔖 ${{ steps.ver.outputs.next }} [skip release]"
+            git commit -m "chore: 🔖 ${{ steps.keep.outputs.next }} [skip release]"
             git push
           fi
 
       - name: Tag & publish release (asset + notas)
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ steps.ver.outputs.next }}
-          name: ${{ steps.ver.outputs.next }}
+          tag_name: ${{ steps.keep.outputs.next }}
+          name: ${{ steps.keep.outputs.next }}
           generate_release_notes: true
           files: dist/mw-occupancy-motion-element.js
